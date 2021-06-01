@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# a tty must be allocated to read stdin, necessary
+# for hooks like interactive-secrets
+exec < /dev/tty
+
+hook-interactive-secrets
+
