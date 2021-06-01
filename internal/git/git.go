@@ -12,7 +12,7 @@ import (
 )
 
 func GetStagedFiles() ([]string, error) {
-	cmd := exec.Command("git", "diff", "--staged", "--name-only")
+	cmd := exec.Command("git", "diff", "--staged", "--name-only", "--no-color")
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 	cmd.Stdout = stdout

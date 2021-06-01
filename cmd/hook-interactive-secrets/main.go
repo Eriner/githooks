@@ -11,8 +11,6 @@ import (
 	"strings"
 
 	"github.com/eriner/githooks/internal/git"
-	"github.com/gabriel-vasile/mimetype"
-	"github.com/montanaflynn/stats"
 )
 
 var (
@@ -26,6 +24,8 @@ func init() {
 }
 
 func main() {
+	// TODO: only run this on new files, not all changed files.
+	// will have to parse the git diff a bit more
 	stagedFiles, err := git.GetStagedFiles()
 	if err != nil {
 		log.Fatalf("error getting staged files: %s\n", err.Error())
@@ -54,11 +54,9 @@ func main() {
 				suspect[f] = true
 			}
 		}
-		/*
-			if suspect[f] {
-				continue
-			}
-		*/
+		if suspect[f] {
+			continue
+		}
 
 		// Check Shannon entropy
 		entropic, err := isEntropic(f)
@@ -111,66 +109,55 @@ func main() {
 	}
 }
 
+const (
+	b64Charset string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+	hexCharset string = "0123456789abcdefABCEDF"
+)
+
+// limitCharset returns s, limited to characters in charset, with a limiter cap
+// of 20 characters. After there are 20 chararcters that match the charset, the rest
+// are added *unconditionally*.
+// Not to be used as a filter or for validation routines.
+func limitCharset(s string, charset string) string {
+	var out string
+	for _, ch := range s {
+		if len(out) > 20 {
+			out += string(ch)
+		}
+		if x := strings.IndexRune(charset, ch); x != -1 {
+			out += string(ch)
+		}
+	}
+	return out
+}
+
 func isEntropic(file string) (bool, error) {
 	dat, err := ioutil.ReadFile(file)
 	if err != nil {
 		return false, err
 	}
-	mime := mimetype.Detect(dat)
-
-	if mime.Is("text/plain") {
-		// Split the lines and calculate the Shanon entropy for each line.
-		// If there are extreme outliers, it is possible that there are
-		// hardcoded secrets.
-		lines := strings.Split(string(dat), "\n")
-		var scores []float64
-		for _, line := range lines {
-			scores = append(scores, float64(shannon(line)))
-		}
-		scores = append(scores, float64(shannon(string(dat))))
-
-		mean, err := stats.Mean(scores)
-		if err != nil {
-			return false, fmt.Errorf("error calculating shannon score mean: %w", err)
-		}
-		// log.Printf("file %q mean %v", file, mean)
-		if mean > 500 {
-			// If the mean is more than 500, it is likely the file is a certificate or
-			// some other truly random data.
-			return true, nil
-		}
-
-		// NOTE: my idea to detect one-off hardcoded secrets using statistical outliers still
-		// needs some work here. Given a large enough file, there are bound to be outliers in
-		// the fourth quartile. But this alone does not signal entropy. Will come back to this
-		// at some point. The mean check should be enough to catch private keys.
-		/*
-
-			// If we don't have enough datapoints, calculating statistical outliers is pointless
-			// and we can return early.
-			if len(scores) < 24 {
-				return false, nil
+	lines := strings.Split(string(dat), "\n")
+	for _, line := range lines {
+		for _, word := range strings.Split(line, " ") {
+			b64Shannon := float64(shannon(limitCharset(word, b64Charset)))
+			if b64Shannon > 4.5 {
+				log.Println(word)
+				return true, nil
 			}
-
-			// For now, we're considering any file with extreme outliers above the mean to be entropic.
-			// This will have more false-positives, but this also ensures that we don't miss anything.
-			outliers, err := stats.QuartileOutliers(scores)
-			if err != nil {
-				return false, fmt.Errorf("error calculating shannon score outliers: %w", err)
+			hexShannon := float64(shannon(limitCharset(word, hexCharset)))
+			if hexShannon > 3.5 {
+				log.Println(word)
+				return true, nil
 			}
-			for _, outlier := range outliers.Extreme {
-				if outlier > mean {
-					log.Println("exteme outlier: " + file)
-					return true, nil
-				}
-			}
-		*/
+		}
 	}
 	return false, nil
 }
 
-func shannon(s string) int {
-	// for the sake of not triggering on every source-langage file...
+func shannon(s string) float64 {
+	if s == "" {
+		return 0
+	}
 	charFreq := make(map[rune]float64)
 	for _, i := range s {
 		charFreq[i]++
@@ -178,7 +165,9 @@ func shannon(s string) int {
 	var t float64
 	for _, freq := range charFreq {
 		f := freq / float64(len(s))
-		t += f * math.Log2(f)
+		if f > 0 {
+			t += -1 * (f * math.Log2(f))
+		}
 	}
-	return int(math.Ceil(t*-1)) * len(s)
+	return t
 }
