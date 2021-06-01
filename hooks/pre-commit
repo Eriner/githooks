@@ -5,4 +5,5 @@
 exec < /dev/tty
 
 hook-interactive-secrets
+hook-go
 
