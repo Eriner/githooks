@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-// DiffOfFile provides command injection as a service!
+// DiffOfFile returns `git diff` of files, minus the diff header.
 func DiffOfFile(file string) (string, error) {
 	if strings.Index(file, " ") != -1 {
 		return "", errors.New("invalid file provided to GetDiffOfFile")
@@ -22,7 +22,18 @@ func DiffOfFile(file string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error getting file absolute path: %q", f)
 	}
-	return execGitCmd([]string{"git", "diff", "--staged", f})
+	s, err := execGitCmd([]string{"git", "diff", "--staged", f})
+	if err != nil {
+		return "", err
+	}
+	// We have to lop off the 4-line header, as it contains the git short-hashes which
+	// are not a part of the commit and guaranteed to have high-entropy. Maybe there
+	// is a git flag for this. /shrug
+	ss := strings.Split(s, "\n")
+	if len(ss) < 5 {
+		return "", errors.New("git diff missing header: more than 4 lines in output expected")
+	}
+	return strings.Join(ss[3:], "\n"), nil
 }
 
 func StagedFiles() ([]string, error) {

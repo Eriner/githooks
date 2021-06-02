@@ -40,8 +40,8 @@ func main() {
 	if len(lines[0]) < 8 {
 		log.Fatalln("error: minimum commit message length is 8 characters")
 	}
-	if len(lines[0]) > 49 { // 50 - 1 (emoji)
-		log.Fatalf("Summary line is too long! Use less than 49 characters.\n")
+	if len(lines[0]) > 47 { // 50 - 3, where 50 is max line length and 3 is (emoji) + "  "
+		log.Fatalf("Summary line is too long! Use less than 47 characters.\n")
 	}
 
 	// pick an emoji by msg contents
@@ -125,7 +125,7 @@ func main() {
 		}
 		emoji = randomEmojis[int(i.Int64())]
 	}
-	msg = emoji + " " + msg
+	msg = emoji + "  " + msg
 	log.Println("commit looks good!")
 	if err := ioutil.WriteFile(fileName, []byte(msg), 0o700); err != nil {
 		log.Fatalf("error: %s\n", err.Error())
