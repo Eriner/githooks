@@ -24,9 +24,7 @@ func init() {
 }
 
 func main() {
-	// TODO: only run this on new files, not all changed files.
-	// will have to parse the git diff a bit more
-	stagedFiles, err := git.GetStagedFiles()
+	stagedFiles, err := git.GetNewStagedFiles()
 	if err != nil {
 		log.Fatalf("error getting staged files: %s\n", err.Error())
 	}
@@ -141,12 +139,12 @@ func isEntropic(file string) (bool, error) {
 		for _, word := range strings.Split(line, " ") {
 			b64Shannon := float64(shannon(limitCharset(word, b64Charset)))
 			if b64Shannon > 4.5 {
-				log.Println(word)
+				log.Printf("entropic string in %q found: %q\n", file, word)
 				return true, nil
 			}
 			hexShannon := float64(shannon(limitCharset(word, hexCharset)))
 			if hexShannon > 3.5 {
-				log.Println(word)
+				log.Printf("entropic string in %q found: %q\n", file, word)
 				return true, nil
 			}
 		}
