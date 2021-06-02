@@ -40,8 +40,8 @@ func main() {
 	if len(lines[0]) < 8 {
 		log.Fatalln("error: minimum commit message length is 8 characters")
 	}
-	if len(lines[0]) > 47 { // 50 - 3, where 50 is max line length and 3 is (emoji) + "  "
-		log.Fatalf("Summary line is too long! Use less than 47 characters.\n")
+	if len(lines[0]) > 48 { // 50 - 2, where 50 is max line length and 2 is (emoji) + " "
+		log.Fatalf("Summary line is too long! Use less than 48 characters.\n")
 	}
 
 	// pick an emoji by msg contents
