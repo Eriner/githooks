@@ -20,6 +20,10 @@ relevant.
 * [hook-interactive-secrets](./cmd/hook-interactive-secrets) checks for secrets,
 and provides interactive override.
 * [hook-go](./cmd/hook-go) lint, vet, and test Go code.
+* [hook-json-check](./cmd/hook-json-check) ensures that all checked-in `*.json`
+files parse as valid JSON.
+* [hook-dead-symlinks](./cmd/hook-dead-symlinks) prevents dead symlinks from being
+added to a repository.
 
 ### commit-msg
 
@@ -31,4 +35,5 @@ commit summaries.
 ### pre-push
 
 * [hook-signoff-checker](./cmd/hook-signoff-checker) checks that commits are signed-off.
-* [hook-gpg-sign-checker](./cmd/hook-gpg-sign-checker) checks that commits are GPG signed.
+* [hook-gpg-sign-checker](./cmd/hook-gpg-sign-checker) checks that commits are
+GPG signed.
