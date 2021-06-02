@@ -19,7 +19,7 @@ relevant.
 
 * [hook-interactive-secrets](./cmd/hook-interactive-secrets) checks for secrets,
 and provides interactive override.
-* [hook-go](./cmd/hook-go) lint and test Go code.
+* [hook-go](./cmd/hook-go) lint, vet, and test Go code.
 
 ### commit-msg
 

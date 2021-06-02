@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
 	"os"
@@ -24,7 +23,7 @@ func init() {
 }
 
 func main() {
-	stagedFiles, err := git.GetNewStagedFiles()
+	stagedFiles, err := git.StagedFiles()
 	if err != nil {
 		log.Fatalf("error getting staged files: %s\n", err.Error())
 	}
@@ -130,11 +129,11 @@ func limitCharset(s string, charset string) string {
 }
 
 func isEntropic(file string) (bool, error) {
-	dat, err := ioutil.ReadFile(file)
+	dat, err := git.DiffOfFile(file)
 	if err != nil {
 		return false, err
 	}
-	lines := strings.Split(string(dat), "\n")
+	lines := strings.Split(dat, "\n")
 	for _, line := range lines {
 		for _, word := range strings.Split(line, " ") {
 			b64Shannon := float64(shannon(limitCharset(word, b64Charset)))

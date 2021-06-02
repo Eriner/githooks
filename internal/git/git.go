@@ -9,26 +9,41 @@ import (
 	"errors"
 	"fmt"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
-func GetStagedFiles() ([]string, error) {
-	return execGitCmd([]string{"git", "diff", "--staged", "--name-only", "--no-color"})
+// DiffOfFile provides command injection as a service!
+func DiffOfFile(file string) (string, error) {
+	if strings.Index(file, " ") != -1 {
+		return "", errors.New("invalid file provided to GetDiffOfFile")
+	}
+	f, err := filepath.Abs(filepath.Clean(file))
+	if err != nil {
+		return "", fmt.Errorf("error getting file absolute path: %q", f)
+	}
+	return execGitCmd([]string{"git", "diff", "--staged", f})
 }
 
-// GetNewSGetNewStagedFiles is similar to GetStagedFiles, but only returns the new
+func StagedFiles() ([]string, error) {
+	s, err := execGitCmd([]string{"git", "diff", "--staged", "--name-only", "--no-color"})
+	return sliceFromStringList(s), err
+}
+
+// NewStagedFiles is similar to StagedFiles, but only returns the new
 // files staged for commit, not modified files.
-func GetNewStagedFiles() ([]string, error) {
-	return execGitCmd([]string{"git", "diff", "--staged", "--name-only", "--no-color", "--diff-filter=A", "HEAD"})
+func NewStagedFiles() ([]string, error) {
+	s, err := execGitCmd([]string{"git", "diff", "--staged", "--name-only", "--no-color", "--diff-filter=A", "HEAD"})
+	return sliceFromStringList(s), err
 }
 
 // execGitCmd returns a slice of files as sourced from running `git` commands.
-func execGitCmd(cmd []string) ([]string, error) {
+func execGitCmd(cmd []string) (string, error) {
 	if len(cmd) < 2 {
-		return nil, errors.New("invalid command passed to execGitCmd")
+		return "", errors.New("invalid command passed to execGitCmd")
 	}
 	if cmd[0] != "git" {
-		return nil, errors.New("non-git command passed to execGitCmd")
+		return "", errors.New("non-git command passed to execGitCmd")
 	}
 	c := exec.Command(cmd[0], cmd[1:]...)
 	stdout := new(bytes.Buffer)
@@ -37,9 +52,13 @@ func execGitCmd(cmd []string) ([]string, error) {
 	c.Stderr = stderr
 	err := c.Run()
 	if err != nil {
-		return nil, fmt.Errorf("error running git diff: %w", err)
+		return "", fmt.Errorf("error running git diff: %w", err)
 	}
-	rawLines := strings.Split(strings.TrimSpace(stdout.String()), "\n")
+	return stdout.String(), nil
+}
+
+func sliceFromStringList(s string) []string {
+	rawLines := strings.Split(strings.TrimSpace(s), "\n")
 	var out []string
 	for _, str := range rawLines {
 		if strings.TrimSpace(str) == "" {
@@ -47,5 +66,5 @@ func execGitCmd(cmd []string) ([]string, error) {
 		}
 		out = append(out, str)
 	}
-	return out, nil
+	return out
 }
