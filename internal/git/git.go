@@ -30,8 +30,8 @@ func DiffOfFile(file string) (string, error) {
 	// are not a part of the commit and guaranteed to have high-entropy. Maybe there
 	// is a git flag for this. /shrug
 	ss := strings.Split(s, "\n")
-	if len(ss) < 5 {
-		return "", errors.New("git diff missing header: more than 4 lines in output expected")
+	if len(ss) < 4 {
+		return "", errors.New("git diff missing header: 4-line header expected in output, but was missing")
 	}
 	return strings.Join(ss[3:], "\n"), nil
 }

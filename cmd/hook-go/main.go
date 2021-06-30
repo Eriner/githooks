@@ -16,7 +16,7 @@ func init() {
 }
 
 func main() {
-	if _, err := os.Stat("go.mod"); err != nil && !errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat("go.mod"); errors.Is(err, os.ErrNotExist) {
 		// not a Go project
 		os.Exit(0)
 	}

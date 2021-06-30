@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euf -o pipefail
+
 go install ./...
 
 echo "built all binaries!"
