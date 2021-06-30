@@ -8,4 +8,5 @@ hook-interactive-secrets
 hook-go
 hook-json-check
 hook-dead-symlinks
+hook-big-files
 

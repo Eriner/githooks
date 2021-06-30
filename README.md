@@ -2,6 +2,9 @@
 
 Just some git hooks I use.
 
+Not production ready, lots to do. I'll eventually get these to a point where I
+can recommend them to people, and as CI tools.
+
 ## Purpose
 
 These tools exist almost entirely to mitigate human error. I make mistakes, and
@@ -46,10 +49,10 @@ and provides interactive override.
 files parse as valid JSON.
 * [hook-dead-symlinks](./cmd/hook-dead-symlinks) prevents dead symlinks from being
 added to a repository.
+* [hook-big-files](./cmd/hook-big-files) prevents big files from being added
+to a repository.
 * TODO: [hook-binary-files](./cmd/hook-binary-files) prevents binary files from being
 added to a repository.
-* TODO: [hook-big-files](./cmd/hook-big-files) prevents big files from being added
-to a repository.
 * TODO: [hook-dockerfile](./cmd/hook-dockerfile) lint Dockerfiles.
 * TODO: [hook-k8s-manifests](./cmd/hook-k8s-manifests) lint k8s manifests.
 * TODO: [hook-terraform](./cmd/hook-terraform) lint terraform plans.
