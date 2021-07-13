@@ -14,8 +14,8 @@ source ${0:h}/config
 exec < /dev/tty
 
 
-# remove any stale notes from previous (failed) invocations
-git notes remove &>/dev/null || true
+## remove any stale notes from previous (failed) invocations
+#git notes remove &>/dev/null || true
 
 # for each hook, add the result as a note, with the hook name as the ref
 for hook in ${_hooks_pre_push}; do
@@ -23,10 +23,10 @@ for hook in ${_hooks_pre_push}; do
   #exitCode=${?}
   if [[ ${out} != "" ]]; then
     echo ${out}
-    # add to the specific hook's note ref
-    git notes --ref=${hook} add -f -m "${out}" &>/dev/null
-    # ...and to the summary (default) ref
-    git notes append -m "${out}"
+    ## add to the specific hook's note ref
+    #git notes --ref=${hook} add -f -m "${out}" &>/dev/null
+    ## ...and to the summary (default) ref
+    #git notes append -m "${out}"
   fi
 done
 
