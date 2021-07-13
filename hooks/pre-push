@@ -13,19 +13,42 @@ source ${0:h}/config
 # for hooks like interactive-secrets
 exec < /dev/tty
 
+
+# remove any stale notes from previous (failed) invocations
+git notes remove &>/dev/null || true
+
 # for each hook, add the result as a note, with the hook name as the ref
 for hook in ${_hooks_pre_push}; do
   out=$(${hook} 2>&1)
   #exitCode=${?}
   if [[ ${out} != "" ]]; then
     echo ${out}
-    git notes --ref="${hook}" add -f -m "${out}"
+    # add to the specific hook's note ref
+    git notes --ref=${hook} add -f -m "${out}" &>/dev/null
+    # ...and to the summary (default) ref
+    git notes append -m "${out}"
   fi
 done
 
-## and after we're done evaluating all of the hooks, create a summary to be attached to the main ref
-#for hook in "${hooks}"; do
-#  note="$(git notes --ref=${hook} show)"
-#done
+# It should be possible to append these notes to the commit itself, to be published and
+# shared. This would resolve issues with notes becoming detached from a ref during a rebase.
+# However, in its current state, these utilities are designed to be local-only.
+#TODO
 
-exit 1
+## and after we're done evaluating all of the hooks, create a summary to be appended
+## to the commit message
+#notes=()
+#for hook in ${_hooks_pre_push}; do
+#  notes+="$(git notes --ref=${hook} show 2>/dev/null)"
+#  #if [[ ${note} != "" ]]; then
+#  #  echo thisisthehooktext ${note}
+#  #fi
+#done
+#
+## append the summary to the commit message
+#_msg="$(git log --format=%B -n 1 HEAD)\n"
+#for n in ${notes}; do
+#  _msg+="${n}"
+#  _msg+=$'\n'
+#done
+#git commit --amend -m "${_msg}" 2>/dev/null
