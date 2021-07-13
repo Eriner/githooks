@@ -1,0 +1,28 @@
+# This is a configuration file sourced by all githooks.
+#
+# Edit this file per-repo or as-necessary to enable or disable hooks.
+#
+#
+
+# Each pre-commit hook below is executed on each `git commit`.
+# The tools decide if they are relevant, exiting early if they are not.
+# Every tool that runs prints one of two exit messages; "ok", or some error.
+# If a tools name is not listed in standard output but is in this list, the tool
+# exited early and did not run.
+_hooks_pre_commit=(
+  hook-interactive-secrets
+  hook-go
+  hook-json-check
+  hook-dead-symlinks
+  hook-big-files
+)
+
+# By default, pre-push runs the same hooks as pre-commit.
+# The difference is that pre-push adds the results of the hooks
+# as metadata to the commit, utilizing the git notes feature.
+_hooks_pre_push=${_hooks_pre_commit}
+
+# commit-msg hooks are used to modify commit messages, or enforce syntax.
+_hooks_commit_msg=(
+  hook-emojify-commit-msg
+)

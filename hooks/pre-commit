@@ -1,19 +1,19 @@
-#!/bin/bash
-
-set -euf -o pipefail
+#!/usr/bin/env zsh
 
 # a tty must be allocated to read stdin, necessary
 # for hooks like interactive-secrets
 exec < /dev/tty
 
-hooks=(
-  hook-interactive-secrets
-  hook-go
-  hook-json-check
-  hook-dead-symlinks
-  hook-big-files
-)
+# exit early if config doesn't exist
+if [[ ! -r "${0:h}/config" ]]; then
+  print "${0:h}/config does not exist. Cannot execute githooks"
+  exit 1
+fi
 
-for hook in "${hooks}"; do
+# read the config
+source ${0:h}/config
+
+# execute each hook
+for hook in ${_hooks_pre_commit}; do
   ${hook}
 done

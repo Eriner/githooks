@@ -1,5 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env zsh
 
-set -euf -o pipefail
+# exit early if config doesn't exist
+if [[ ! -r "${0:h}/config" ]]; then
+  print "${0:h}/config does not exist. Cannot execute githooks"
+  exit 1
+fi
 
-hook-emojify-commit-msg ${1}
+# read the config
+source ${0:h}/config
+
+# execute each hook
+for hook in ${_hooks_commit_msg}; do
+  ${hook} ${1}
+done

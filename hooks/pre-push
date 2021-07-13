@@ -1,6 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env zsh
 
-set -euf -o pipefail
+# exit early if config doesn't exist
+if [[ ! -r "${0:h}/config" ]]; then
+  print "${0:h}/config does not exist. Cannot execute githooks"
+  exit 1
+fi
+
+# read the config
+source ${0:h}/config
+
 
 # a tty must be allocated to read stdin, necessary
 # for hooks like interactive-secrets
@@ -15,7 +23,7 @@ hooks=(
 )
 
 # for each hook, add the result as a note, with the hook name as the ref
-for hook in "${hooks}"; do
+for hook in "${_hooks_pre_push}"; do
   out="$(${hook} 2>&1)"
   echo "${out}"
   #exitCode=${?}
@@ -28,4 +36,3 @@ done
 #for hook in "${hooks}"; do
 #  note="$(git notes --ref=${hook} show)"
 #done
-
