@@ -27,7 +27,10 @@ func main() {
 		log.Fatalf("error getting staged files: %s\n", err.Error())
 	}
 	if len(stagedFiles) == 0 {
-		log.Fatalln("no files staged for commit")
+		// if there are no files staged for commit, then we must assume that this was
+		// executed during pre-commit, and is being run again in pre-push.
+		// TODO: create git.GetNote() functions to handle this
+		os.Exit(0)
 	}
 
 	// suspect files are the ones we intend to prompt the user to be certain
