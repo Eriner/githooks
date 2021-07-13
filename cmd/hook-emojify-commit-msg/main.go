@@ -2,20 +2,19 @@ package main
 
 import (
 	"crypto/rand"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"math/big"
 	"os"
-	"path/filepath"
 	"strings"
+
+	"github.com/eriner/githooks/internal"
 )
 
 var fileName string
 
 func init() {
-	log.Default().SetPrefix(fmt.Sprintf("%s: ", filepath.Base(os.Args[0])))
-	log.Default().SetFlags(0)
+	internal.Init()
 	if len(os.Args) != 2 {
 		log.Fatalln("error: invalid argument count")
 	}

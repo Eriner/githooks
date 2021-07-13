@@ -18,11 +18,12 @@ to be fixed** - not that I should just override the verifications.
 
 ## Use
 
-To build all tools, `$ ./build.sh`. (it just runs `go install ./...`)
-The build script will print instructions for setting up your git templates dir.
-From that point forward, new git repositories will automatically use these hooks.
+Either run `./build.sh`, or:
 
-To add to an existing project, run `$ usegithooks`, which is installed by `build.sh`.
+```sh
+go install ./...
+git config --global core.hooksPath ${PWD}/hooks
+```
 
 The [hook](./hooks) scripts merely call the tools in this repository in sequence.
 
@@ -31,14 +32,15 @@ relevant. They're all written in Go, and currently without any external dependen
 These hooks can be installed easily on an air-gapped machine.
 
 When invoked (when a tool deems itself "relevant" to the current commit) the tool
-will either exit with an error, halting the git operation, or will print an
-"all clear".
+will either exit with an error, halting the git operation, or will print an explicit
+"all clear" to indicate it has run but encountered no errors.
 
 ## Tools
 
 Some of these tools may be broken out into separate sub-tools in the future,
 ex: `hook-go` becomes `hook-go`, `hook-go-security`, `hook-go-test`, `hook-go-mod`,
-etc.
+etc. Applying any sort of configuration to these tools is beyond their scope. Better
+to just enable/disable tools entirely.
 
 ### pre-commit
 
@@ -60,7 +62,6 @@ added to a repository.
 * TODO: [hook-img-optimize](./cmd/hook-img-optimize) losslessly-compress images.
 * TODO: [hook-opa](./cmd/hook-opa) scan repositories with OPA.
 * TODO: [hook-markdown](./cmd/hook-markdown) validate Markdown syntax.
-
 
 ### commit-msg
 

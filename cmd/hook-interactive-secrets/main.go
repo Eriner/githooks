@@ -6,9 +6,9 @@ import (
 	"log"
 	"math"
 	"os"
-	"path/filepath"
 	"strings"
 
+	"github.com/eriner/githooks/internal"
 	"github.com/eriner/githooks/internal/git"
 )
 
@@ -18,8 +18,7 @@ var (
 )
 
 func init() {
-	log.Default().SetPrefix(fmt.Sprintf("%s: ", filepath.Base(os.Args[0])))
-	log.Default().SetFlags(0)
+	internal.Init()
 }
 
 func main() {
@@ -75,7 +74,7 @@ func main() {
 		}
 	}
 	if suspectCt == 0 {
-		log.Println("no secrets staged for commit, all good!")
+		log.Println("ok")
 		os.Exit(0)
 	}
 

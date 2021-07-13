@@ -1,12 +1,19 @@
 #!/bin/bash
 
+set -euf -o pipefail
+
 # a tty must be allocated to read stdin, necessary
 # for hooks like interactive-secrets
 exec < /dev/tty
 
-hook-interactive-secrets
-hook-go
-hook-json-check
-hook-dead-symlinks
-hook-big-files
+hooks=(
+  hook-interactive-secrets
+  hook-go
+  hook-json-check
+  hook-dead-symlinks
+  hook-big-files
+)
 
+for hook in "${hooks}"; do
+  ${hook}
+done

@@ -2,17 +2,15 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 
+	"github.com/eriner/githooks/internal"
 	"github.com/eriner/githooks/internal/git"
 )
 
 func init() {
-	log.Default().SetPrefix(fmt.Sprintf("%s: ", filepath.Base(os.Args[0])))
-	log.Default().SetFlags(0)
+	internal.Init()
 }
 
 func main() {
