@@ -38,7 +38,7 @@ func main() {
 		}
 	}
 	if len(bigFiles) == 0 {
-		log.Println("no big files, all good!")
+		log.Println("ok")
 		os.Exit(0)
 	}
 	log.Println("The following files seem rather large, are you sure that you meant to add them?")

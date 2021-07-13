@@ -9,18 +9,9 @@ fi
 # read the config
 source ${0:h}/config
 
-
 # a tty must be allocated to read stdin, necessary
 # for hooks like interactive-secrets
 exec < /dev/tty
-
-hooks=(
-  hook-interactive-secrets
-  hook-go
-  hook-json-check
-  hook-dead-symlinks
-  hook-big-files
-)
 
 # for each hook, add the result as a note, with the hook name as the ref
 for hook in "${_hooks_pre_push}"; do

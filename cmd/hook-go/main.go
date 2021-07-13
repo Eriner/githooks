@@ -30,7 +30,7 @@ func main() {
 			log.Fatalf("error running %q: %s\n", c, err.Error())
 		}
 	}
-	log.Println("go vet, fmt, and test look good!")
+	log.Println("ok")
 }
 
 func cmd(command string) error {

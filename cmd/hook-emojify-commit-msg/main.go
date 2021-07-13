@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"os"
 	"strings"
+	"unicode"
 
 	"github.com/eriner/githooks/internal"
 )
@@ -41,6 +42,12 @@ func main() {
 	}
 	if len(lines[0]) > 48 { // 50 - 2, where 50 is max line length and 2 is (emoji) + " "
 		log.Fatalf("Summary line is too long! Use less than 48 characters.\n")
+	}
+
+	// if there is already an emoji, exit early
+	if msg[0] > unicode.MaxASCII {
+		log.Println("ok")
+		os.Exit(0)
 	}
 
 	// pick an emoji by msg contents
@@ -125,8 +132,8 @@ func main() {
 		emoji = randomEmojis[int(i.Int64())]
 	}
 	msg = emoji + "  " + msg
-	log.Println("commit looks good!")
 	if err := ioutil.WriteFile(fileName, []byte(msg), 0o700); err != nil {
 		log.Fatalf("error: %s\n", err.Error())
 	}
+	log.Println("ok")
 }

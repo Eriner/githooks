@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/eriner/githooks/internal"
@@ -33,6 +34,7 @@ func main() {
 		}
 	}
 	if jsonCt > 0 {
-		log.Println("all json files parsed as valid json, all good!")
+		log.Println("ok")
+		os.Exit(0)
 	}
 }
