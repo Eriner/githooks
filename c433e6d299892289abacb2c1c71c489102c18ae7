@@ -1,1 +1,3 @@
 hook-interactive-secrets: ok
+
+hook-go: ok
