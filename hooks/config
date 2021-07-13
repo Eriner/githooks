@@ -20,7 +20,7 @@ _hooks_pre_commit=(
 # By default, pre-push runs the same hooks as pre-commit.
 # The difference is that pre-push adds the results of the hooks
 # as metadata to the commit, utilizing the git notes feature.
-_hooks_pre_push=${_hooks_pre_commit}
+_hooks_pre_push=(${_hooks_pre_commit[@]})
 
 # commit-msg hooks are used to modify commit messages, or enforce syntax.
 _hooks_commit_msg=(
