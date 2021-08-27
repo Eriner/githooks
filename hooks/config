@@ -9,6 +9,10 @@
 # Every tool that runs prints one of two exit messages; "ok", or some error.
 # If a tools name is not listed in standard output but is in this list, the tool
 # exited early and did not run.
+# ...And while it would be great if tools could run in pre-commit, they are
+# unable to add messages to the commit message at this stage.
+# TODO: remove these, and move them to commit-msg, appending the results to the
+# commit message.
 _hooks_pre_commit=(
   hook-interactive-secrets
   hook-go
@@ -17,12 +21,12 @@ _hooks_pre_commit=(
   hook-big-files
 )
 
-# By default, pre-push runs the same hooks as pre-commit.
-# The difference is that pre-push adds the results of the hooks
-# as metadata to the commit, utilizing the git notes feature.
-_hooks_pre_push=(${_hooks_pre_commit[@]})
-
 # commit-msg hooks are used to modify commit messages, or enforce syntax.
 _hooks_commit_msg=(
   hook-emojify-commit-msg
 )
+
+# By default, pre-push runs the same hooks as pre-commit.
+# The difference is that pre-push adds the results of the hooks
+# as metadata to the commit, utilizing the git notes feature.
+#_hooks_pre_push=(${_hooks_pre_commit[@]})

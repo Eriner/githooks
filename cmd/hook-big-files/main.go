@@ -24,13 +24,17 @@ func init() {
 
 func main() {
 	var bigFiles []string
-	nf, err := git.NewStagedFiles()
+	nf, err := git.StagedFiles()
 	if err != nil {
 		log.Fatalln(err)
 	}
 	for _, fileName := range nf {
 		s, err := os.Stat(fileName)
 		if err != nil {
+			if _, ok := err.(*os.PathError); ok {
+				// can occur when a staged file is deleted
+				continue
+			}
 			log.Fatalf("error: unable to get file size")
 		}
 		if s.Size() > (20 * MiB) {

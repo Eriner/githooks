@@ -13,13 +13,15 @@ import (
 
 func init() {
 	internal.Init()
-}
 
-func main() {
+	// Early exit if not a go project
 	if _, err := os.Stat("go.mod"); errors.Is(err, os.ErrNotExist) {
 		// not a Go project
 		os.Exit(0)
 	}
+}
+
+func main() {
 	commands := []string{
 		"go vet ./...",
 		"go fmt ./...",
